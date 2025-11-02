@@ -1,166 +1,155 @@
 #cloud-config
 autoinstall:
-version: 1
-
-# Locale and keyboard settings
-
-locale: en_US.UTF-8
-keyboard:
-layout: us
-
-# Network configuration
-
-network:
-network:
-version: 2
-ethernets:
-any:
-match:
-name: en*
-dhcp4: true
-dhcp6: true
-
-# Storage configuration (uses entire disk)
-
-storage:
-layout:
-name: lvm
-sizing-policy: all
-
-# Identity configuration (CHANGE THESE!)
-
-identity:
-hostname: dev-workstation
-username: developer
-password: “$6$rounds=4096$saltsaltpepper$YourHashedPasswordHere”
-# Generate password hash with: mkpasswd -m sha-512
-
-# SSH configuration
-
-ssh:
-install-server: true
-allow-pw: true
-authorized-keys: []
-# - “ssh-rsa YOUR_PUBLIC_KEY_HERE”
-
-# Package selection
-
-packages:
-# System utilities
-- ubuntu-desktop-minimal
-- build-essential
-- git
-- curl
-- wget
-- vim
-- tmux
-- htop
-- net-tools
-- software-properties-common
-- apt-transport-https
-- ca-certificates
-- gnupg
-- lsb-release
-
-```
-# Java Development
-- openjdk-21-jdk
-- openjdk-17-jdk
-- openjdk-11-jdk
-- maven
-- gradle
-
-# Web Development
-- nodejs
-- npm
-
-# Database clients
-- postgresql-client
-- mysql-client
-
-# Python (for tooling)
-- python3
-- python3-pip
-- python3-venv
-
-# Version control
-- git-lfs
-
-# Container tools (Podman as Docker alternative)
-- podman
-- podman-compose
-- buildah
-- skopeo
-```
-
-# Late commands - runs after installation
-
-late-commands:
-# Update system
-- curtin in-target –target=/target – apt update
-- curtin in-target –target=/target – apt upgrade -y
-
-```
-# Install Docker (official repository)
-- curtin in-target --target=/target -- mkdir -p /etc/apt/keyrings
-- curtin in-target --target=/target -- curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-- curtin in-target --target=/target -- chmod a+r /etc/apt/keyrings/docker.asc
-- curtin in-target --target=/target -- sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list'
-- curtin in-target --target=/target -- apt update
-- curtin in-target --target=/target -- apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# Add user to docker group
-- curtin in-target --target=/target -- usermod -aG docker developer
-
-# Install SDKMAN for Java version management
-- curtin in-target --target=/target -- su - developer -c 'curl -s "https://get.sdkman.io" | bash'
-
-# Install NVM for Node.js version management
-- curtin in-target --target=/target -- su - developer -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash'
-
-# Install Visual Studio Code
-- curtin in-target --target=/target -- wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/packages.microsoft.gpg
-- curtin in-target --target=/target -- sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-- curtin in-target --target=/target -- apt update
-- curtin in-target --target=/target -- apt install -y code
-
-# Install kubectl
-- curtin in-target --target=/target -- curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-- curtin in-target --target=/target -- install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-- curtin in-target --target=/target -- rm kubectl
-
-# Install k9s (Kubernetes CLI manager)
-- curtin in-target --target=/target -- sh -c 'curl -sS https://webinstall.dev/k9s | bash'
-
-# Install Minikube
-- curtin in-target --target=/target -- curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-- curtin in-target --target=/target -- install minikube-linux-amd64 /usr/local/bin/minikube
-- curtin in-target --target=/target -- rm minikube-linux-amd64
-
-# Install Helm
-- curtin in-target --target=/target -- curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
-# Install IntelliJ IDEA Community (via snap)
-- curtin in-target --target=/target -- snap install intellij-idea-community --classic
-
-# Install Postman
-- curtin in-target --target=/target -- snap install postman
-
-# Install DBeaver Community
-- curtin in-target --target=/target -- snap install dbeaver-ce
-
-# Configure Git defaults
-- curtin in-target --target=/target -- su - developer -c 'git config --global init.defaultBranch main'
-- curtin in-target --target=/target -- su - developer -c 'git config --global pull.rebase false'
-
-# Enable Docker service
-- curtin in-target --target=/target -- systemctl enable docker
-
-# Clean up
-- curtin in-target --target=/target -- apt autoremove -y
-- curtin in-target --target=/target -- apt clean
-```
-
-# Power off after installation
-
-shutdown: reboot
+  version: 1
+  
+  # Locale and keyboard settings
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  
+  # Network configuration
+  network:
+    network:
+      version: 2
+      ethernets:
+        any:
+          match:
+            name: en*
+          dhcp4: true
+          dhcp6: true
+  
+  # Storage configuration (uses entire disk)
+  storage:
+    layout:
+      name: lvm
+      sizing-policy: all
+  
+  # Identity configuration (CHANGE THESE!)
+  identity:
+    hostname: dev-workstation
+    username: developer
+    password: "$6$rounds=4096$saltsaltpepper$YourHashedPasswordHere"
+    # Generate password hash with: mkpasswd -m sha-512
+  
+  # SSH configuration
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys: []
+      # - "ssh-rsa YOUR_PUBLIC_KEY_HERE"
+  
+  # Package selection
+  packages:
+    # System utilities
+    - ubuntu-desktop-minimal
+    - build-essential
+    - git
+    - curl
+    - wget
+    - vim
+    - tmux
+    - htop
+    - net-tools
+    - software-properties-common
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
+    - lsb-release
+    
+    # Java Development
+    - openjdk-21-jdk
+    - openjdk-17-jdk
+    - openjdk-11-jdk
+    - maven
+    - gradle
+    
+    # Web Development
+    - nodejs
+    - npm
+    
+    # Database clients
+    - postgresql-client
+    - mysql-client
+    
+    # Python (for tooling)
+    - python3
+    - python3-pip
+    - python3-venv
+    
+    # Version control
+    - git-lfs
+    
+    # Container tools (Podman as Docker alternative)
+    - podman
+    - podman-compose
+    - buildah
+    - skopeo
+  
+  # Late commands - runs after installation
+  late-commands:
+    # Update system
+    - curtin in-target --target=/target -- apt update
+    - curtin in-target --target=/target -- apt upgrade -y
+    
+    # Install Docker (official repository)
+    - curtin in-target --target=/target -- mkdir -p /etc/apt/keyrings
+    - curtin in-target --target=/target -- curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    - curtin in-target --target=/target -- chmod a+r /etc/apt/keyrings/docker.asc
+    - curtin in-target --target=/target -- sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list'
+    - curtin in-target --target=/target -- apt update
+    - curtin in-target --target=/target -- apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    
+    # Add user to docker group
+    - curtin in-target --target=/target -- usermod -aG docker developer
+    
+    # Install SDKMAN for Java version management
+    - curtin in-target --target=/target -- su - developer -c 'curl -s "https://get.sdkman.io" | bash'
+    
+    # Install NVM for Node.js version management
+    - curtin in-target --target=/target -- su - developer -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash'
+    
+    # Install Visual Studio Code
+    - curtin in-target --target=/target -- wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/packages.microsoft.gpg
+    - curtin in-target --target=/target -- sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    - curtin in-target --target=/target -- apt update
+    - curtin in-target --target=/target -- apt install -y code
+    
+    # Install kubectl
+    - curtin in-target --target=/target -- curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - curtin in-target --target=/target -- install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - curtin in-target --target=/target -- rm kubectl
+    
+    # Install k9s (Kubernetes CLI manager)
+    - curtin in-target --target=/target -- sh -c 'curl -sS https://webinstall.dev/k9s | bash'
+    
+    # Install Minikube
+    - curtin in-target --target=/target -- curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    - curtin in-target --target=/target -- install minikube-linux-amd64 /usr/local/bin/minikube
+    - curtin in-target --target=/target -- rm minikube-linux-amd64
+    
+    # Install Helm
+    - curtin in-target --target=/target -- curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    
+    # Install IntelliJ IDEA Community (via snap)
+    - curtin in-target --target=/target -- snap install intellij-idea-community --classic
+    
+    # Install Postman
+    - curtin in-target --target=/target -- snap install postman
+    
+    # Install DBeaver Community
+    - curtin in-target --target=/target -- snap install dbeaver-ce
+    
+    # Configure Git defaults
+    - curtin in-target --target=/target -- su - developer -c 'git config --global init.defaultBranch main'
+    - curtin in-target --target=/target -- su - developer -c 'git config --global pull.rebase false'
+    
+    # Enable Docker service
+    - curtin in-target --target=/target -- systemctl enable docker
+    
+    # Clean up
+    - curtin in-target --target=/target -- apt autoremove -y
+    - curtin in-target --target=/target -- apt clean
+  
+  # Power off after installation
+  shutdown: reboot
+  
